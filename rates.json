@@ -1,7 +1,15 @@
 {
-  "gold24": 12480.0,
-  "silver999": 165.0,
-  "goldSource": "https://groww.in/gold-rates/gold-rate-today-in-hyderabad",
-  "silverSource": "https://groww.in/silver-rates/silver-rates-in-hyderabad",
-  "updatedAt": "2026-11-26T09:30:28+00:00"
+  "gold24": {
+    "Hyderabad": 12480.0,
+    "Karimnagar": 12480.0,
+    "Chennai": 12589.0
+  },
+  "silver999": {
+    "Hyderabad": 165.0,
+    "Karimnagar": 165.0,
+    "Chennai": 165.0
+  },
+  "goldSource": "https://groww.in/gold-rates/gold-rate-today-in-{}",
+  "silverSource": "https://groww.in/silver-rates/silver-rates-in-{}",
+  "updatedAt": "2026-11-26T09:40:24+00:00"
 }

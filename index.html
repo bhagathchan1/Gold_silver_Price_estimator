@@ -55,7 +55,7 @@ svg text{fill:var(--fg);font-family:var(--body)}
   <p class="sub">Estimate the price of gold or silver jewellery in Hyderabad and Karimnagar: purity, weight, wastage, making charge and GST.</p>
 </header>
 
-<p class="note" id="live" style="margin:0">Using built-in reference rates. Replace the rate with the one your jeweller quotes.</p>
+<p class="note" id="live" style="margin:0">Could not load live rates, so these are older reference rates. Replace the rate with the one your jeweller quotes.</p>
 <div class="tabs" role="group" aria-label="Metal" id="metals">
   <button data-metal="gold" aria-pressed="true">Gold</button>
   <button data-metal="silver" aria-pressed="false">Silver</button>
@@ -149,7 +149,7 @@ svg text{fill:var(--fg);font-family:var(--body)}
     silver:{rate:165,lbl:'Fine silver (999) rate per gram (₹), editable',opts:[[999,'999 fine'],[925,'925 sterling'],[800,'800']],sel:925,div:999,w:6,m:12,
       ref:'Starting rate: ₹165 per gram of fine silver, from <a href="https://groww.in/silver-rates/silver-rates-in-hyderabad" target="_blank" rel="noopener">Groww, Hyderabad, 26 Nov 2026</a>. Rates change daily, so check Groww or your jeweller and edit the rate above.'}
   };
-  var metal='gold', city='Hyderabad', rates={gold:{},silver:{}};
+  var metal='gold', city='Hyderabad', rates={gold:{},silver:{}}, source='built-in', dirty=false;
   ['Hyderabad','Karimnagar','Chennai'].forEach(function(c){rates.gold[c]=METAL.gold.rate;rates.silver[c]=METAL.silver.rate});
   var $=function(i){return document.getElementById(i)};
   var inr=function(n){return '₹'+Math.round(n).toLocaleString('en-IN')};
@@ -167,41 +167,54 @@ svg text{fill:var(--fg);font-family:var(--body)}
     $('bar').innerHTML=parts.map(function(p){return '<span style="width:'+(tot?p[2]/tot*100:0)+'%;background:'+p[1]+'"></span>'}).join('');
     $('tbl').innerHTML=parts.map(function(p){return '<tr><td><span class="dot" style="background:'+p[1]+'"></span>'+p[0]+'</td><td>'+inr(p[2])+'</td></tr>'}).join('')+'<tr><td>Total</td><td>'+inr(tot)+'</td></tr>';
   }
-  function load(){
+  function note(){
+    var M0=METAL[metal];
+    $('refnote').innerHTML=source==='live'
+      ? 'Rate for '+city+': '+(metal==='gold'?'₹'+Math.round(rates.gold[city]).toLocaleString('en-IN')+' per gram of 24K':'₹'+rates.silver[city].toFixed(1)+' per gram of fine silver')+', from <a href="'+M0.url[city]+'" target="_blank" rel="noopener">Groww ('+city+')</a>. Excludes making charge and GST, which are added below.'
+      : M0.ref;
+  }
+  function load(resetInputs){
     var M0=METAL[metal];
     $('ratelbl').textContent=M0.lbl;
-    $('karat').innerHTML=M0.opts.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===M0.sel?' selected':'')+'>'+o[1]+'</option>'}).join('');
+    if(resetInputs){
+      $('karat').innerHTML=M0.opts.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===M0.sel?' selected':'')+'>'+o[1]+'</option>'}).join('');
+      $('wast').value=M0.w; $('mk').value=M0.m;
+    }
     $('rate').value=rates[metal][city];
-    $('wast').value=M0.w; $('mk').value=M0.m;
-    $('refnote').innerHTML=M0.ref+' Hyderabad and Karimnagar usually differ from each other by only a small local margin.';
+    note();
     calc();
   }
   function pick(sel,attr,fn){
     document.querySelectorAll(sel+' button').forEach(function(b){
       b.addEventListener('click',function(){
-        rates[metal][city]=num('rate'); fn(b.dataset[attr]);
+        rates[metal][city]=num('rate'); var prev=metal; fn(b.dataset[attr]);
         document.querySelectorAll(sel+' button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
-        load();
+        load(metal!==prev);
       });
     });
   }
   pick('#metals','metal',function(v){metal=v});
   pick('#tabs','city',function(v){city=v});
   ['rate','karat','wt','wast','mk'].forEach(function(id){$(id).addEventListener('input',calc);$(id).addEventListener('change',calc)});
-  var dirty=false;
   $('rate').addEventListener('input',function(){dirty=true});
-  load();
-  // Load the latest Groww rates saved in rates.json (refreshed automatically every 2 hours).
+  load(true);
+  // Latest Groww rates per city, saved in rates.json (refreshed automatically every 2 hours).
   fetch('rates.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){
-    var g=+d.gold24, s=+d.silver999, t=new Date(d.updatedAt);
-    var when=isNaN(t)?'recently':t.toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
-    if(g>0){METAL.gold.rate=g;Object.keys(rates.gold).forEach(function(c){rates.gold[c]=g});
-      METAL.gold.ref='Rate: ₹'+Math.round(g).toLocaleString('en-IN')+' per gram of 24K, from <a href="'+d.goldSource+'" target="_blank" rel="noopener">Groww (Hyderabad)</a>.'}
-    if(s>0){METAL.silver.rate=s;Object.keys(rates.silver).forEach(function(c){rates.silver[c]=s});
-      METAL.silver.ref='Rate: ₹'+s.toFixed(1)+' per gram of fine silver, from <a href="'+d.silverSource+'" target="_blank" rel="noopener">Groww (Hyderabad)</a>.'}
-    $('live').textContent='Live rates from Groww, updated '+when+'. You can still edit the rate.';
-    $('refnote').innerHTML=METAL[metal].ref+' Hyderabad and Karimnagar usually differ from each other by only a small local margin.';
+    var ok=false;
+    ['Hyderabad','Karimnagar','Chennai'].forEach(function(c){
+      var g=+d.gold24[c], s=+d.silver999[c];
+      if(g>0){rates.gold[c]=g;ok=true}
+      if(s>0){rates.silver[c]=s;ok=true}
+      METAL.gold.url=METAL.gold.url||{};METAL.silver.url=METAL.silver.url||{};
+      METAL.gold.url[c]=d.goldSource.replace('{}',c.toLowerCase());
+      METAL.silver.url[c]=d.silverSource.replace('{}',c.toLowerCase());
+    });
+    if(!ok) return;
+    source='live';
+    var t=new Date(d.updatedAt);
+    $('live').textContent='Live Groww rates, checked '+(isNaN(t)?'recently':t.toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}))+'. You can still edit the rate.';
     if(!dirty){$('rate').value=rates[metal][city]}
+    note();
     calc();
   }).catch(function(){});
 })();
