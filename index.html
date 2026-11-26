@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Telangana Gold and Silver Estimator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+:root{--bg:#fbf9f4;--panel:#ffffff;--fg:#25211a;--mute:#6f685a;--line:#e6dfce;--gold:#b8860b;--gold2:#e3b341;--making:#7a4e2d;--gst:#4c6a6a;--wast:#c98a3a;--ok:#2f7d4f;
+--head:'Space Grotesk',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17140d;--panel:#211c12;--fg:#f1ead9;--mute:#a49b86;--line:#3a3322;--gold:#e3b341;--gold2:#f0cb6a;--making:#d08a5d;--gst:#7fb0b0;--wast:#e0a65a;--ok:#6cc08a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17140d;--panel:#211c12;--fg:#f1ead9;--mute:#a49b86;--line:#3a3322;--gold:#e3b341;--gold2:#f0cb6a;--making:#d08a5d;--gst:#7fb0b0;--wast:#e0a65a;--ok:#6cc08a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;
+padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font-family:var(--head);font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.1;margin:0;text-wrap:balance}
+h2{font-family:var(--head);font-size:1.25rem;margin:0 0 8px;text-wrap:balance}
+p{margin:0 0 10px;max-width:68ch}
+.sub{color:var(--mute);margin-top:6px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:500;padding:8px 16px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#fff}
+:root[data-theme="dark"] .tabs button[aria-pressed="true"]{color:#17140d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tabs button[aria-pressed="true"]{color:#17140d}}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media(max-width:720px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fields .wide{grid-column:1/-1}
+label{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--mute);letter-spacing:.03em;text-transform:uppercase}
+input,select{font:inherit;font-size:1rem;text-transform:none;letter-spacing:0;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%;min-width:0}
+.total{font-family:var(--head);font-size:clamp(2rem,6vw,2.8rem);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.pergram{color:var(--mute);font-variant-numeric:tabular-nums}
+.bar{display:flex;height:22px;border-radius:5px;overflow:hidden;margin:14px 0 10px;background:var(--line)}
+.bar span{display:block;height:100%;min-width:0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:6px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right}
+tr:last-child td{border:0;font-weight:600}
+.dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media(max-width:720px){.two{grid-template-columns:minmax(0,1fr)}}
+.eq{font-family:var(--head);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:8px 0;overflow-x:auto;white-space:nowrap}
+.note{color:var(--mute);font-size:.85rem}
+.svgwrap{overflow-x:auto}
+svg text{fill:var(--fg);font-family:var(--body)}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Telangana Gold and Silver Estimator</h1>
+  <p class="sub">Estimate the price of gold or silver jewellery in Hyderabad and Karimnagar: purity, weight, wastage, making charge and GST.</p>
+</header>
+
+<p class="note" id="live" style="margin:0">Using built-in reference rates. Replace the rate with the one your jeweller quotes.</p>
+<div class="tabs" role="group" aria-label="Metal" id="metals">
+  <button data-metal="gold" aria-pressed="true">Gold</button>
+  <button data-metal="silver" aria-pressed="false">Silver</button>
+</div>
+<div class="tabs" role="group" aria-label="City" id="tabs">
+  <button data-city="Hyderabad" aria-pressed="true">Hyderabad</button>
+  <button data-city="Karimnagar" aria-pressed="false">Karimnagar</button>
+  <button data-city="Chennai" aria-pressed="false">Chennai (compare)</button>
+</div>
+
+<section class="grid">
+  <div class="panel">
+    <div class="fields">
+      <label class="wide"><span id="ratelbl">24K rate per gram (₹), editable</span>
+        <input id="rate" type="number" min="0" step="1" inputmode="decimal">
+      </label>
+      <label>Purity
+        <select id="karat"></select>
+      </label>
+      <label>Weight (grams)
+        <input id="wt" type="number" min="0" step="0.1" value="10" inputmode="decimal">
+      </label>
+      <label>Wastage (%)
+        <input id="wast" type="number" min="0" step="0.5" value="4" inputmode="decimal">
+      </label>
+      <label>Making charge (%)
+        <input id="mk" type="number" min="0" step="0.5" value="8" inputmode="decimal">
+      </label>
+    </div>
+    <p class="note" style="margin-top:14px" id="refp"><span id="refnote"></span></p>
+  </div>
+
+  <div class="panel">
+    <div class="pergram" id="cityline"></div>
+    <div class="total" id="total"></div>
+    <div class="pergram" id="eff"></div>
+    <div class="bar" id="bar" role="img" aria-label="Share of each cost in the final price"></div>
+    <table id="tbl"></table>
+  </div>
+</section>
+
+<section>
+  <h2>Two ways to understand it</h2>
+  <div class="two">
+    <div class="panel">
+      <h2>1. The simple picture</h2>
+      <p>You pay for four things: the metal itself (gold or silver), a little extra gold the jeweller loses while crafting (wastage), the craftsman's work (making charge), and tax.</p>
+      <div class="svgwrap">
+      <svg viewBox="0 0 360 150" width="100%" role="img" aria-label="Diagram: a ring is gold plus wastage plus making plus GST equals final price">
+        <circle cx="40" cy="55" r="26" fill="#e3b341" stroke="#b8860b" stroke-width="3"/><circle cx="40" cy="55" r="12" fill="var(--panel)"/>
+        <text x="40" y="105" text-anchor="middle" font-size="12">Metal</text>
+        <text x="86" y="60" text-anchor="middle" font-size="22">+</text>
+        <rect x="104" y="35" width="40" height="40" rx="6" fill="#c98a3a"/><text x="124" y="60" text-anchor="middle" font-size="18" style="fill:#fff">✂</text>
+        <text x="124" y="105" text-anchor="middle" font-size="12">Wastage</text>
+        <text x="164" y="60" text-anchor="middle" font-size="22">+</text>
+        <rect x="182" y="35" width="40" height="40" rx="6" fill="#7a4e2d"/><text x="202" y="62" text-anchor="middle" font-size="18" style="fill:#fff">⚒</text>
+        <text x="202" y="105" text-anchor="middle" font-size="12">Making</text>
+        <text x="242" y="60" text-anchor="middle" font-size="22">+</text>
+        <rect x="260" y="35" width="40" height="40" rx="6" fill="#4c6a6a"/><text x="280" y="62" text-anchor="middle" font-size="16" style="fill:#fff">GST</text>
+        <text x="280" y="105" text-anchor="middle" font-size="12">Tax</text>
+        <text x="330" y="60" text-anchor="middle" font-size="22">=</text>
+        <text x="180" y="140" text-anchor="middle" font-size="13">Final price on the bill</text>
+      </svg></div>
+      <p><b>Karat</b> is gold purity out of 24 parts. 22K means 22 parts gold and 2 parts copper or silver, so it is harder and better for jewellery. 24K is nearly pure but too soft to wear.</p>
+      <p><b>Silver</b> purity is given as fineness per 1,000. 999 is fine silver, 925 is sterling (92.5% silver, the usual jewellery grade), 800 is common for utensils and coins. Silver costs far less per gram, so making charge is a bigger share of the bill.</p>
+      <p><b>Why Hyderabad, Karimnagar and Chennai differ:</b> the base price comes from international gold or silver and the dollar-rupee rate, so it is the same everywhere. Local differences come from transport, local demand and jeweller margins, and they are small.</p>
+    </div>
+    <div class="panel">
+      <h2>2. From first principles</h2>
+      <p>Metal is priced by mass of pure metal. Purity f (a fraction) scales the pure rate P:</p>
+      <div class="eq">P₍f₎ = P × f &nbsp;&nbsp; gold: f = K ÷ 24 &nbsp;|&nbsp; silver: f = fineness ÷ 999</div>
+      <p>Check: 14,411 × 22 ÷ 24 = 13,210 for 22K gold. For silver, 925 sterling is 92.5% pure, so at ₹180 per gram of fine silver it costs 180 × 925 ÷ 999 ≈ ₹167 per gram.</p>
+      <div class="eq">G = w × P₍f₎ &nbsp;&nbsp; (metal value)</div>
+      <div class="eq">W = G × a ÷ 100 &nbsp;&nbsp; (wastage)</div>
+      <div class="eq">M = G × m ÷ 100 &nbsp;&nbsp; (making)</div>
+      <div class="eq">T = 0.03 × (G + W) + 0.05 × M &nbsp;&nbsp; (GST)</div>
+      <div class="eq">Price = G + W + M + T</div>
+      <p>Here w is weight in grams, a is wastage %, m is making %. GST is 3% on the metal part and 5% on the job-work part. Because every term is proportional to G (T is a fixed mix of G + W and M), the price is linear in weight and in the 24K rate, so doubling either doubles the total. The effective cost per gram of metal content is Price ÷ w.</p>
+      <p class="note">Simplified model. Some jewellers charge making per gram instead of per cent, add hallmarking fees, or apply 3% GST to the whole bill. Always compare against the invoice.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+(function(){
+  var METAL={
+    gold:{rate:14411,lbl:'24K rate per gram (₹), editable',opts:[[24,'24K (99.9%)'],[22,'22K (91.6%)'],[18,'18K (75%)']],sel:22,div:24,w:4,m:8,
+      ref:'Starting rate: ₹14,411 per gram of 24K, a Hyderabad figure from <a href="https://www.thehansindia.com/business/market-compass/gold-and-silver-rates-today-11-nov-in-hyderabad-visakhapatnam-check-gold-prices-of-18k-22k-24k-1141055" target="_blank" rel="noopener">The Hans India, 11 Nov 2026</a>. Sources disagree widely, so replace it with the rate your jeweller quotes.'},
+    silver:{rate:180,lbl:'Fine silver (999) rate per gram (₹), editable',opts:[[999,'999 fine'],[925,'925 sterling'],[800,'800']],sel:925,div:999,w:6,m:12,
+      ref:'Starting rate: ₹180 per gram of fine silver, from <a href="https://www.bankbazaar.com/silver-rate-hyderabad.html" target="_blank" rel="noopener">BankBazaar, 21 Nov 2026</a>. Other sites showed ₹183 to ₹195 around the same time, so replace it with the rate your jeweller quotes.'}
+  };
+  var metal='gold', city='Hyderabad', rates={gold:{},silver:{}};
+  ['Hyderabad','Karimnagar','Chennai'].forEach(function(c){rates.gold[c]=METAL.gold.rate;rates.silver[c]=METAL.silver.rate});
+  var $=function(i){return document.getElementById(i)};
+  var inr=function(n){return '₹'+Math.round(n).toLocaleString('en-IN')};
+  function num(id){var v=parseFloat($(id).value);return isFinite(v)&&v>=0?v:0}
+  function calc(){
+    var M0=METAL[metal];
+    rates[metal][city]=num('rate');
+    var K=num('karat'),w=num('wt'),a=num('wast'),m=num('mk');
+    var pk=rates[metal][city]*K/M0.div, G=w*pk, W=G*a/100, M=G*m/100, T=0.03*(G+W)+0.05*M, tot=G+W+M+T;
+    var pur=metal==='gold'?K+'K':K+' silver';
+    $('cityline').textContent=city+' · '+pur+' at '+(pk<100?'₹'+pk.toFixed(1):inr(pk))+' per gram';
+    $('total').textContent=inr(tot);
+    $('eff').textContent=w>0?'About '+inr(tot/w)+' per gram all in':'Enter a weight';
+    var parts=[[metal==='gold'?'Gold':'Silver','var(--gold)',G],['Wastage','var(--wast)',W],['Making','var(--making)',M],['GST','var(--gst)',T]];
+    $('bar').innerHTML=parts.map(function(p){return '<span style="width:'+(tot?p[2]/tot*100:0)+'%;background:'+p[1]+'"></span>'}).join('');
+    $('tbl').innerHTML=parts.map(function(p){return '<tr><td><span class="dot" style="background:'+p[1]+'"></span>'+p[0]+'</td><td>'+inr(p[2])+'</td></tr>'}).join('')+'<tr><td>Total</td><td>'+inr(tot)+'</td></tr>';
+  }
+  function load(){
+    var M0=METAL[metal];
+    $('ratelbl').textContent=M0.lbl;
+    $('karat').innerHTML=M0.opts.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===M0.sel?' selected':'')+'>'+o[1]+'</option>'}).join('');
+    $('rate').value=rates[metal][city];
+    $('wast').value=M0.w; $('mk').value=M0.m;
+    $('refnote').innerHTML=M0.ref+' Hyderabad and Karimnagar usually differ from each other by only a small local margin.';
+    calc();
+  }
+  function pick(sel,attr,fn){
+    document.querySelectorAll(sel+' button').forEach(function(b){
+      b.addEventListener('click',function(){
+        rates[metal][city]=num('rate'); fn(b.dataset[attr]);
+        document.querySelectorAll(sel+' button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+        load();
+      });
+    });
+  }
+  pick('#metals','metal',function(v){metal=v});
+  pick('#tabs','city',function(v){city=v});
+  ['rate','karat','wt','wast','mk'].forEach(function(id){$(id).addEventListener('input',calc);$(id).addEventListener('change',calc)});
+  load();
+})();
+</script>
+</body>
+</html>
