@@ -127,7 +127,7 @@ svg text{fill:var(--fg);font-family:var(--body)}
       <h2>2. From first principles</h2>
       <p>Metal is priced by mass of pure metal. Purity f (a fraction) scales the pure rate P:</p>
       <div class="eq">P₍f₎ = P × f &nbsp;&nbsp; gold: f = K ÷ 24 &nbsp;|&nbsp; silver: f = fineness ÷ 999</div>
-      <p>Check: 14,411 × 22 ÷ 24 = 13,210 for 22K gold. For silver, 925 sterling is 92.5% pure, so at ₹180 per gram of fine silver it costs 180 × 925 ÷ 999 ≈ ₹167 per gram.</p>
+      <p>Check: 12,458 × 22 ÷ 24 ≈ 11,420 for 22K gold. For silver, 925 sterling is 92.5% pure, so at ₹165 per gram of fine silver it costs 165 × 925 ÷ 999 ≈ ₹153 per gram.</p>
       <div class="eq">G = w × P₍f₎ &nbsp;&nbsp; (metal value)</div>
       <div class="eq">W = G × a ÷ 100 &nbsp;&nbsp; (wastage)</div>
       <div class="eq">M = G × m ÷ 100 &nbsp;&nbsp; (making)</div>
@@ -144,10 +144,10 @@ svg text{fill:var(--fg);font-family:var(--body)}
 <script>
 (function(){
   var METAL={
-    gold:{rate:14411,lbl:'24K rate per gram (₹), editable',opts:[[24,'24K (99.9%)'],[22,'22K (91.6%)'],[18,'18K (75%)']],sel:22,div:24,w:4,m:8,
-      ref:'Starting rate: ₹14,411 per gram of 24K, a Hyderabad figure from <a href="https://www.thehansindia.com/business/market-compass/gold-and-silver-rates-today-11-nov-in-hyderabad-visakhapatnam-check-gold-prices-of-18k-22k-24k-1141055" target="_blank" rel="noopener">The Hans India, 11 Nov 2026</a>. Sources disagree widely, so replace it with the rate your jeweller quotes.'},
-    silver:{rate:180,lbl:'Fine silver (999) rate per gram (₹), editable',opts:[[999,'999 fine'],[925,'925 sterling'],[800,'800']],sel:925,div:999,w:6,m:12,
-      ref:'Starting rate: ₹180 per gram of fine silver, from <a href="https://www.bankbazaar.com/silver-rate-hyderabad.html" target="_blank" rel="noopener">BankBazaar, 21 Nov 2026</a>. Other sites showed ₹183 to ₹195 around the same time, so replace it with the rate your jeweller quotes.'}
+    gold:{rate:12458,lbl:'24K rate per gram (₹), editable',opts:[[24,'24K (99.9%)'],[22,'22K (91.6%)'],[18,'18K (75%)']],sel:22,div:24,w:4,m:8,
+      ref:'Starting rate: ₹12,458 per gram of 24K, from <a href="https://groww.in/gold-rates/gold-rate-today-in-hyderabad" target="_blank" rel="noopener">Groww, Hyderabad, 25 Nov 2026</a>. Rates change daily, so check Groww or your jeweller and edit the rate above.'},
+    silver:{rate:165,lbl:'Fine silver (999) rate per gram (₹), editable',opts:[[999,'999 fine'],[925,'925 sterling'],[800,'800']],sel:925,div:999,w:6,m:12,
+      ref:'Starting rate: ₹165 per gram of fine silver, from <a href="https://groww.in/silver-rates/silver-rates-in-hyderabad" target="_blank" rel="noopener">Groww, Hyderabad, 26 Nov 2026</a>. Rates change daily, so check Groww or your jeweller and edit the rate above.'}
   };
   var metal='gold', city='Hyderabad', rates={gold:{},silver:{}};
   ['Hyderabad','Karimnagar','Chennai'].forEach(function(c){rates.gold[c]=METAL.gold.rate;rates.silver[c]=METAL.silver.rate});
