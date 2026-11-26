@@ -188,7 +188,22 @@ svg text{fill:var(--fg);font-family:var(--body)}
   pick('#metals','metal',function(v){metal=v});
   pick('#tabs','city',function(v){city=v});
   ['rate','karat','wt','wast','mk'].forEach(function(id){$(id).addEventListener('input',calc);$(id).addEventListener('change',calc)});
+  var dirty=false;
+  $('rate').addEventListener('input',function(){dirty=true});
   load();
+  // Load the latest Groww rates saved in rates.json (refreshed automatically every 2 hours).
+  fetch('rates.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){
+    var g=+d.gold24, s=+d.silver999, t=new Date(d.updatedAt);
+    var when=isNaN(t)?'recently':t.toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+    if(g>0){METAL.gold.rate=g;Object.keys(rates.gold).forEach(function(c){rates.gold[c]=g});
+      METAL.gold.ref='Rate: ₹'+Math.round(g).toLocaleString('en-IN')+' per gram of 24K, from <a href="'+d.goldSource+'" target="_blank" rel="noopener">Groww (Hyderabad)</a>.'}
+    if(s>0){METAL.silver.rate=s;Object.keys(rates.silver).forEach(function(c){rates.silver[c]=s});
+      METAL.silver.ref='Rate: ₹'+s.toFixed(1)+' per gram of fine silver, from <a href="'+d.silverSource+'" target="_blank" rel="noopener">Groww (Hyderabad)</a>.'}
+    $('live').textContent='Live rates from Groww, updated '+when+'. You can still edit the rate.';
+    $('refnote').innerHTML=METAL[metal].ref+' Hyderabad and Karimnagar usually differ from each other by only a small local margin.';
+    if(!dirty){$('rate').value=rates[metal][city]}
+    calc();
+  }).catch(function(){});
 })();
 </script>
 </body>

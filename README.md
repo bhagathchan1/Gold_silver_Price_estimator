@@ -37,4 +37,4 @@ T = 0.03 × (G + W) + 0.05 × M   (GST: 3% on metal, 5% on job work)
 Price = G + W + M + T
 ```
 
-Starting rates (₹12,458/g 24K gold, ₹165/g fine silver) are taken from Groww and are editable. They are not live quotes: update them from [Groww gold](https://groww.in/gold-rates/gold-rate-today-in-hyderabad) / [Groww silver](https://groww.in/silver-rates/silver-rates-in-hyderabad) or your jeweller. Confirm against your jeweller's invoice.
+Rates are refreshed automatically every 2 hours by a GitHub Action (`.github/workflows/update-rates.yml`, `scripts/update_rates.py`), which reads Hyderabad gold and silver rates from Groww into `rates.json`; the page loads that file on every visit. The rate box stays editable. If the update fails the page falls back to built-in values. Cross-check with [Groww gold](https://groww.in/gold-rates/gold-rate-today-in-hyderabad) / [Groww silver](https://groww.in/silver-rates/silver-rates-in-hyderabad) or your jeweller. Confirm against your jeweller's invoice.
