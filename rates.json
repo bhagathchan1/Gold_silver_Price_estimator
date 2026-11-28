@@ -1,8 +1,8 @@
 {
   "gold24": {
-    "Hyderabad": 12840.0,
-    "Karimnagar": 12840.0,
-    "Chennai": 12840.0
+    "Hyderabad": 12786.0,
+    "Karimnagar": 12786.0,
+    "Chennai": 12786.0
   },
   "silver999": {
     "Hyderabad": 170.0,
@@ -11,5 +11,5 @@
   },
   "goldSource": "https://groww.in/gold-rates/gold-rate-today-in-{}",
   "silverSource": "https://groww.in/silver-rates/silver-rates-in-{}",
-  "updatedAt": "2026-11-27T22:43:10+00:00"
+  "updatedAt": "2026-11-28T07:47:19+00:00"
 }
